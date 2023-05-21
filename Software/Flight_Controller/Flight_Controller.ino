@@ -19,25 +19,25 @@ WiFiUDP Udp;  // Object for WiFi UDP class
 #define MOT_TOP_LEFT 18
 #define MOT_TOP_RIGHT 13
 #define MOT_BOTTOM_LEFT 28
-#define MOT_BOTTOM_RIGHT 2
+#define MOT_BOTTOM_RIGHT 1
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PID gain and limit settings
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float pid_p_gain_roll = 1.3;               //Gain setting for the roll P-controller
-float pid_i_gain_roll = 0.0006;              //Gain setting for the roll I-controller 0.04
-float pid_d_gain_roll = 18.0;              //Gain setting for the roll D-controller
-int pid_max_roll = 200;                    //Maximum output of the PID-controller (+/-)
+float pid_p_gain_roll = 2.05;               //Gain setting for the roll P-controller
+float pid_i_gain_roll = 0.013;              //Gain setting for the roll I-controller 0.04
+float pid_d_gain_roll = 11.0;              //Gain setting for the roll D-controller
+int pid_max_roll = 300;                    //Maximum output of the PID-controller (+/-)
 
 float pid_p_gain_pitch = pid_p_gain_roll;  //Gain setting for the pitch P-controller.
 float pid_i_gain_pitch = pid_i_gain_roll;  //Gain setting for the pitch I-controller.
 float pid_d_gain_pitch = pid_d_gain_roll;  //Gain setting for the pitch D-controller.
 int pid_max_pitch = pid_max_roll;          //Maximum output of the PID-controller (+/-)
 
-float pid_p_gain_yaw = 4.0;                //Gain setting for the pitch P-controller. //4.0
-float pid_i_gain_yaw = 0.02;               //Gain setting for the pitch I-controller. //0.02
+float pid_p_gain_yaw = 8.5;                //Gain setting for the pitch P-controller. //4.0
+float pid_i_gain_yaw = 0.005;               //Gain setting for the pitch I-controller. //0.02
 float pid_d_gain_yaw = 0.0;                //Gain setting for the pitch D-controller.
-int pid_max_yaw = 400;                     //Maximum output of the PID-controller (+/-)
+int pid_max_yaw = 300;                     //Maximum output of the PID-controller (+/-)
 
 boolean auto_level = true;                 //Auto level on (true) or off (false)
 
@@ -87,7 +87,11 @@ void setup(){
   pinMode(MOT_BOTTOM_LEFT, OUTPUT);
   pinMode(MOT_BOTTOM_RIGHT, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
-
+  analogWrite(MOT_TOP_LEFT, 0);
+  analogWrite(MOT_TOP_RIGHT, 0);
+  analogWrite(MOT_BOTTOM_LEFT, 0);
+  analogWrite(MOT_BOTTOM_RIGHT, 0);
+  
   //Use the led on the Arduino for startup indication.
   digitalWrite(LED_BUILTIN,HIGH);                                                    //Turn on the warning led.
 
@@ -95,7 +99,8 @@ void setup(){
 
   //Let's take multiple gyro data samples so we can determine the average gyro offset (calibration).
   for (cal_int = 0; cal_int < 2000 ; cal_int ++){                           //Take 2000 readings for calibration.
-    if(cal_int % 15 == 0)digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));                //Change the led status to indicate calibration.
+    if(cal_int % 15 == 0)
+      digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));                //Change the led status to indicate calibration.
     gyro_signalen();                                                        //Read the gyro output.
     gyro_axis_cal[1] += gyro_axis[1];   
     gyro_axis_cal[2] += gyro_axis[2];
@@ -113,7 +118,7 @@ void setup(){
     Serial.print('.');    
     delay(500);    
   }
-
+  Udp.begin(localPort);  
   //Wait until the receiver is active and the throtle is set to the lower position.
   while(receiver_input_channel_3 < 990 || receiver_input_channel_3 > 1020 || receiver_input_channel_4 < 1400){
     int packetSize = Udp.parsePacket();
@@ -159,6 +164,23 @@ void setup(){
 //Main program loop
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void loop(){
+  int packetSize = Udp.parsePacket();
+  if(packetSize) {
+      int n = Udp.read(packetBuffer, UDP_PKT_MAX_SIZE);
+      packetBuffer[n] = '\0';
+      char ch1[5], ch2[5], ch3[5], ch4[5];
+      ch1[4] = '\0'; ch2[4] = '\0'; ch3[4] = '\0'; ch4[4] = '\0';
+      for(int i=0; i<4; i++) {
+        ch4[i] = packetBuffer[i];
+        ch3[i] = packetBuffer[i+4];
+        ch1[i] = packetBuffer[i+8];
+        ch2[i] = packetBuffer[i+12];     
+      }
+      receiver_input_channel_1 = atoi(ch1); // ROLL
+      receiver_input_channel_2 = atoi(ch2); // PITCH
+      receiver_input_channel_3 = atoi(ch3); // THROTTLE
+      receiver_input_channel_4 = atoi(ch4); // YAW
+    }
 
   //65.5 = 1 deg/sec (check the datasheet of the MPU-6050 for more information).
   gyro_roll_input = (gyro_roll_input * 0.7) + ((gyro_roll / 65.5) * 0.3);   //Gyro pid input is deg/sec.
@@ -285,12 +307,12 @@ void loop(){
     esc_3 = throttle + pid_output_pitch - pid_output_roll - pid_output_yaw; //Calculate the pulse for esc 3 (rear-left - CCW)
     esc_4 = throttle - pid_output_pitch - pid_output_roll + pid_output_yaw; //Calculate the pulse for esc 4 (front-left - CW)
 
-    if (battery_voltage < 1240 && battery_voltage > 800){                   //Is the battery connected?
-      esc_1 += esc_1 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-1 pulse for voltage drop.
-      esc_2 += esc_2 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-2 pulse for voltage drop.
-      esc_3 += esc_3 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-3 pulse for voltage drop.
-      esc_4 += esc_4 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-4 pulse for voltage drop.
-    } 
+    // if (battery_voltage < 1240 && battery_voltage > 800){                   //Is the battery connected?
+    //   esc_1 += esc_1 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-1 pulse for voltage drop.
+    //   esc_2 += esc_2 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-2 pulse for voltage drop.
+    //   esc_3 += esc_3 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-3 pulse for voltage drop.
+    //   esc_4 += esc_4 * ((1240 - battery_voltage)/(float)3500);              //Compensate the esc-4 pulse for voltage drop.
+    // } 
 
     if (esc_1 < 1100) esc_1 = 1100;                                         //Keep the motors running.
     if (esc_2 < 1100) esc_2 = 1100;                                         //Keep the motors running.
@@ -329,10 +351,10 @@ void loop(){
   while(micros() - loop_timer < 4000);                                      //We wait until 4000us are passed.
   loop_timer = micros();                                                    //Set the timer for the next loop.
 
-  map(esc_1, 1000, 2000, 0, 1000);
-  map(esc_2, 1000, 2000, 0, 1000);
-  map(esc_3, 1000, 2000, 0, 1000);
-  map(esc_4, 1000, 2000, 0, 1000);
+  esc_1 = map(esc_1, 1000, 2000, 0, 1000);
+  esc_2 = map(esc_2, 1000, 2000, 0, 1000);
+  esc_3 = map(esc_3, 1000, 2000, 0, 1000);
+  esc_4 = map(esc_4, 1000, 2000, 0, 1000);
 
   analogWrite(MOT_TOP_RIGHT, esc_1);
   analogWrite(MOT_BOTTOM_RIGHT, esc_2);
