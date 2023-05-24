@@ -20,13 +20,14 @@ WiFiUDP Udp;  // Object for WiFi UDP class
 #define MOT_TOP_RIGHT 13
 #define MOT_BOTTOM_LEFT 28
 #define MOT_BOTTOM_RIGHT 1
+#define sensitivity 2
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //PID gain and limit settings
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-float pid_p_gain_roll = 2.05;               //Gain setting for the roll P-controller
+float pid_p_gain_roll = 1.3;               //Gain setting for the roll P-controller was 2.05
 float pid_i_gain_roll = 0.013;              //Gain setting for the roll I-controller 0.04
-float pid_d_gain_roll = 11.0;              //Gain setting for the roll D-controller
+float pid_d_gain_roll = 14.0;              //Gain setting for the roll D-controller was 11.0
 int pid_max_roll = 300;                    //Maximum output of the PID-controller (+/-)
 
 float pid_p_gain_pitch = pid_p_gain_roll;  //Gain setting for the pitch P-controller.
