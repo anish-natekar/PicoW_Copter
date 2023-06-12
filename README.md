@@ -12,10 +12,10 @@ Documentation link (Still working on this) - https://picow-copter-docs.readthedo
 APP to control PicoW Copter - [UDP Joystick](https://udpjoystick.en.aptoide.com/app) 
 . delete Aptoid APP after installtion and just keep UDP Joystick APP 
 
-Settings for the Android APP
+Settings for the Android APP UDP joystick
 
 <img src="https://github.com/anish-natekar/PicoW_Copter/blob/main/Images/udpjoystick_values.jpg"  width="200" height="400" />
 
-![my Settings for the APP](./Images/udpjoystick_settings.jpg)
+<img src="https://github.com/anish-natekar/PicoW_Copter/blob/main/Images/udpjoystick_settings.jpg"  width="400" height="200" />
 
 PS - I will be back in July.
