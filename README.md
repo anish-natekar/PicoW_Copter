@@ -15,7 +15,7 @@ APP to control PicoW Copter - [UDP Joystick](https://udpjoystick.en.aptoide.com/
 Settings for the Android APP
 
 ![my Values for the APP](./Images/udpjoystick_values.jpg | width = 150)
-
+<img src="[https://camo.githubusercontent.com/...](https://github.com/anish-natekar/PicoW_Copter/blob/main/Images/udpjoystick_values.jpg)"  width="200" height="400" />
 ![my Settings for the APP](./Images/udpjoystick_settings.jpg)
 
 
