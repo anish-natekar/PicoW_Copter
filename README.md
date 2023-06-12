@@ -7,3 +7,5 @@ Documentation link (Still working on this) - https://picow-copter-docs.readthedo
 
 APP to control PicoW Copter - [UDP Joystick](https://udpjoystick.en.aptoide.com/app) 
 . delete Aptoid APP after installtion and just keep UDP Joystick APP 
+
+PS - I will be back in July.
