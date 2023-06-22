@@ -4,6 +4,8 @@
 
 Affordable micro sub 100g coreless motor quadcopter made using Raspberry Pi pico W and controlled via an APP through WiFi.
 
+OSHW lab - https://oshwlab.com/anishsan/picocopter
+(the connectors might be different Please check the connectors for the battery separately)
 
 First test flight (IT WORKS!!!) - https://www.youtube.com/shorts/tu2c7LCsRs8
 
