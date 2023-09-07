@@ -20,4 +20,4 @@ Settings for the Android APP UDP joystick
 
 <img src="https://github.com/anish-natekar/PicoW_Copter/blob/main/Images/udpjoystick_settings.jpg"  width="600" height="300" />
 
-PS - I will be back in July.
+Mr. Paul Brace has designed a physical Jostick Remote Controller as an alternative to using the UDP Joystick APP. There are some benefits of a physical Joystick remote such as getting force feedback on your fingers when flying the quadcopter. You can find the details for his build here - [Hackster.io Physical Joystick Controller by Paul](https://www.hackster.io/paulsb/drone-joystick-controller-25e036)
