@@ -1,3 +1,5 @@
+
+
 # PicoW_Copter
 
 ![My Pico W Copter (ignore the rubber band)](./Images/PicoW_Copter.jpg)
@@ -12,7 +14,7 @@ First test flight (IT WORKS!!!) - https://www.youtube.com/shorts/tu2c7LCsRs8
 Documentation link (Still working on this) - https://picow-copter-docs.readthedocs.io/en/latest/
 
 APP to control PicoW Copter - [UDP Joystick](https://udpjoystick.en.aptoide.com/app) 
-. delete Aptoid APP after installtion and just keep UDP Joystick APP 
+- Delete the Aptoide app after installation and just keep the UDP Joystick app.
 
 Settings for the Android APP UDP joystick
 
